@@ -1,5 +1,7 @@
 ﻿@page "/countries"
 @inject IRepository repository
+@inject SweetAlertService sweetAlertService
+@inject NavigationManager navigationManager
 
 <h3>Países</h3>
 
@@ -10,8 +12,9 @@
          <table class="table table-striped">
             <thead>
                 <tr>
-                    <th></th>
                     <th>País</th>
+                    <th>Estados / Departamentos</th>
+                    <th></th>
                 </tr>
         </thead>
             <tbody>
@@ -19,13 +22,17 @@
                 {
                      <tr>
                             <td>
-                                <a class="btn btn-warning">Editar</a>
-                                <button class="btn btn-danger">Borrar</button>
+                                @country.Name
                             </td>
                             <td>
-                            @country.Name
+                                @country.StatesNumber
                             </td>
-                        </tr>   
+                            <td>
+                            <a class="btn btn-info" href="/countries/details/@country.Id">Detalles</a>
+                                <a class="btn btn-warning" href="/countries/edit/@country.Id">Editar</a>
+                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(country.Id))>Borrar</button>
+                            </td>
+                     </tr>   
                 }
             </tbody>
         </table>
@@ -37,7 +44,46 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
         var responseHttp = await repository.Get<List<Country>>("/api/countries");
         Countries = responseHttp.Response;
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+        {
+                Title = "Confirmación",
+                Text = "¿Seguro que desea borrar el país?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Sí"
+        });
+
+        var confirm = String.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.Delete($"/api/countries/{id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+        }
+
+        await LoadAsync();
     }
 }

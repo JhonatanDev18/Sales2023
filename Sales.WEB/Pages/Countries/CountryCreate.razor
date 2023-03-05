@@ -1,17 +1,17 @@
-﻿@page "/countries/create"
+﻿@page "/country/create"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAletService
 
 <h3>Crear País</h3>
 
-<CountryForm @ref="countryForm" Country="country" OnValidSubmit="Create" ReturnAction="Return"/>
+<CountryForm @ref="countryForm" Country="country" OnValidSubmit="CreateAsync" ReturnAction="Return" />
 
 @code {
     private Country country = new();
     private CountryForm? countryForm;
 
-    private async Task Create()
+    private async Task CreateAsync()
     {
         var httpResponse = await repository.Post("/api/countries", country);
         if (httpResponse.Error)

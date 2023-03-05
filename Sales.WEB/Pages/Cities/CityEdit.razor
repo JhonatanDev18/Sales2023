@@ -1,11 +1,11 @@
-﻿@page "/category/edit/{Id:int}"
+﻿@page "/city/edit/{Id:int}"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 
-<h3>Editar Categoría</h3>
+<h3>Editar Ciudad</h3>
 
-@if (category is null)
+@if (city is null)
 {
     <div class="align-items-center">
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif?20151024034921" />
@@ -13,25 +13,25 @@
 }
 else
 {
-    <CategoryForm @ref="categoryForm" Category="category" OnValidSubmit="EditAsync" ReturnAction="Return"></CategoryForm>
+    <CityForm @ref="cityForm" City="city" OnValidSubmit="EditAsync" ReturnAction="Return"></CityForm>
 }
 
 @code {
-    private Category? category;
-    private CategoryForm? categoryForm;
+    private City? city;
+    private CityForm? cityForm;
 
     [Parameter]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var responseHttp = await repository.Get<Category>($"/api/categories/{Id}");
+        var responseHttp = await repository.Get<City>($"/api/cities/{Id}");
 
         if (responseHttp.Error)
         {
             if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                navigationManager.NavigateTo("/categories");
+                navigationManager.NavigateTo("/countries");
                 return;
             }
 
@@ -40,12 +40,12 @@ else
             return;
         }
 
-        category = responseHttp.Response;
+        city = responseHttp.Response;
     }
 
     private async void EditAsync()
     {
-        var responseHttp = await repository.Put("/api/categories", category);
+        var responseHttp = await repository.Put("/api/cities", city);
 
         if (responseHttp.Error)
         {
@@ -59,7 +59,7 @@ else
 
     private void Return()
     {
-        categoryForm!.FormPostedSuccessfully = true;
-        navigationManager.NavigateTo("/categories");
+        cityForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo($"/state/details/{city!.StateId}");
     }
 }

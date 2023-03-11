@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject SweetAlertService sweetAlert
 @inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin")]
 
 @if (state is null)
 {

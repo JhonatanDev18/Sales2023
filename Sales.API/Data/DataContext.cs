@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sales.Shared.Entities;
 
 namespace Sales.API.Data
 {
-	public class DataContext : DbContext
-	{
-		public DataContext(DbContextOptions<DataContext> options) : base(options)
+	public class DataContext : IdentityDbContext<User>
+    {
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
 		{
 
 		}

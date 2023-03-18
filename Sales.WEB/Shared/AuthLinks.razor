@@ -1,10 +1,34 @@
 ﻿<AuthorizeView>
     <Authorized>
         <span>Hola, @context.User.Identity!.Name</span>
-        <a href="Logout" class="nav-link btn btn-link">Cerrar Sesión</a>
+        @if (!string.IsNullOrEmpty(photoUser))
+        {
+            <div class="mx-2">
+                <img src="@photoUser" width="50" height="50" style="border-radius:50%" />
+            </div>
+        }
+        <a href="Logout" class="btn btn-danger btn-sm"><i class="oi oi-account-logout" /> Cerrar Sesión</a>
     </Authorized>
     <NotAuthorized>
-        <a href="Register" class="nav-link btn btn-link">Registro</a>
-        <a href="Login" class="nav-link btn btn-link">Iniciar Sesión</a>
+        <a href="Register" class="btn btn-success btn-sm"><i class="oi oi-person" /> Registro</a>
+        <a href="Login" class="btn btn-primary btn-sm"><i class="oi oi-account-login" /> Iniciar Sesión</a>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    private string? photoUser;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+        var claims = authenticationState.User.Claims.ToList();
+        var photoClaim = claims.FirstOrDefault(x => x.Type == "Photo");
+        if (photoClaim is not null)
+        {
+            photoUser = photoClaim.Value;
+        }
+    }
+}

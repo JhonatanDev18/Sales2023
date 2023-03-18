@@ -4,15 +4,23 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>Estado/Departamento:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@State.Name" />
-            <ValidationMessage For="@(() => State.Name)" />
+    <div class="card">
+        <div class="card-header">
+            <span>
+                <i class="oi oi-globe"></i> Estado/Departamento:
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <div>
+                    <InputText class="form-control" @bind-Value="@State.Name" />
+                    <ValidationMessage For="@(() => State.Name)" />
+                </div>
+            </div>
+            <button class="btn btn-success" @onclick="ReturnAction"><i class="oi oi-arrow-thick-left"></i> Regresar</button>
+            <button class="btn btn-primary" type="submit"><i class="oi oi-inbox"></i> Guardar Cambios</button>
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Guardar Cambios</button>
-    <button class="btn btn-success" @onclick="ReturnAction">Regresar</button>
 </EditForm>
 
 @code {

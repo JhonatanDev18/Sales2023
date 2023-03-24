@@ -12,10 +12,9 @@
 @code {
     [Parameter] public int CurrentPage { get; set; } = 1;
     [Parameter] public int TotalPages { get; set; }
-    [Parameter] public int Radio { get; set; } = 9;
+    [Parameter] public int Radio { get; set; } = 10;
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
     List<PageModel> Links = new();
-    int PagesView = 10;
 
     protected override void OnParametersSet()
     {
@@ -35,9 +34,9 @@
                 Enable = previousLinkEnable
             });
 
-        if (TotalPages <= PagesView)
+        for (int i = 1; i <= TotalPages; i++)
         {
-            for (int i = 1; i <= TotalPages; i++)
+            if (TotalPages <= Radio)
             {
                 Links.Add(new PageModel
                     {
@@ -46,9 +45,8 @@
                         Text = $"{i}"
                     });
             }
-        }else if (CurrentPage <= PagesView)
-        {
-            for (int i = 1; i<= PagesView; i++)
+
+            if (TotalPages > Radio && i <= Radio && CurrentPage <= Radio)
             {
                 Links.Add(new PageModel
                     {
@@ -57,20 +55,15 @@
                         Text = $"{i}"
                     });
             }
-        }
-        else
-        {
-            for (int i = 1; i <= TotalPages; i++)
+
+            if (CurrentPage > Radio && i > CurrentPage - Radio && i <= CurrentPage)
             {
-                if (i > CurrentPage - PagesView && i < CurrentPage + 1)
-                {
-                    Links.Add(new PageModel
-                        {
-                            Page = i,
-                            Enable = CurrentPage == i,
-                            Text = $"{i}"
-                        });
-                }
+                Links.Add(new PageModel
+                    {
+                        Page = i,
+                        Enable = CurrentPage == i,
+                        Text = $"{i}"
+                    });
             }
         }
 
@@ -90,10 +83,6 @@
         {
             return;
         }
-
-        CurrentPage = pageModel.Page;
-
-        LoadPages();
 
         await SelectedPage.InvokeAsync(pageModel.Page);
     }

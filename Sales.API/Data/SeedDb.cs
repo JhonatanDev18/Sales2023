@@ -26,7 +26,7 @@ namespace Sales.API.Data
             await CheckCountriesAsync();
             await CheckCategoriesAsync();
             await CheckRolesAsync();
-            await CheckUserAsync("1010", "Jhonatan", "Soto", "soto@yopmail.com", "312 643 1715", "Calle Luna Calle Sol",
+            await CheckUserAsync("1017255529", "Jhonatan", "Soto", "soto@yopmail.com", "312 643 1715", "Calle 57D # 24B - 39",
                 UserType.Admin);
         }
 
@@ -40,7 +40,7 @@ namespace Sales.API.Data
                     List<CountryResponse> countries = (List<CountryResponse>)responseCountries.Result!;
                     foreach (CountryResponse countryResponse in countries)
                     {
-                        Country country = await _context.Countries!.FirstOrDefaultAsync(c => c.Name == countryResponse.Name!)!;
+                        Country? country = await _context.Countries!.FirstOrDefaultAsync(c => c.Name == countryResponse.Name!)!;
                         if (country == null)
                         {
                             country = new() { Name = countryResponse.Name!, States = new List<State>() };
@@ -172,6 +172,12 @@ namespace Sales.API.Data
             var user = await _userHelper.GetUserAsync(email);
             if (user == null)
             {
+                var city = await _context.Cities.FirstOrDefaultAsync(x => x.Name == "Medellín");
+                if (city == null)
+                {
+                    city = await _context.Cities.FirstOrDefaultAsync();
+                }
+
                 user = new User
                 {
                     FirstName = firstName,
@@ -181,12 +187,15 @@ namespace Sales.API.Data
                     PhoneNumber = phone,
                     Address = address,
                     Document = document,
-                    City = _context.Cities.FirstOrDefault(),
+                    City = city,
                     UserType = userType,
                 };
 
                 await _userHelper.AddUserAsync(user, "123456");
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
             }
 
             return user;

@@ -14,7 +14,7 @@ else
         <div class="card-header">
             <span>
                 <i class="oi oi-list"></i> Categorías
-                <a class="btn btn-sm btn-primary float-end" href="/category/create"><i class="oi oi-plus"></i> Nueva Categoría</a>
+                <a class="btn btn-sm btn-primary float-end" @onclick=@(() => ShowModal())><i class="oi oi-plus"></i> Nueva Categoría</a>
             </span>
         </div>
         <div class="card-body">
@@ -49,7 +49,7 @@ else
                                         @category.Name
                                     </td>
                                     <td>
-                                        <a href="/category/edit/@category.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
+                                        <a @onclick=@(() => ShowModal(category.Id, true)) class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
                                         <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(category.Id))><i class="oi oi-trash" /> Borrar</button>
                                     </td>
                                 </tr>
@@ -67,6 +67,9 @@ else
     private int currentPage = 1;
     private int totalPages;
 
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
     [Parameter]
     [SupplyParameterFromQuery]
     public string Page { get; set; } = string.Empty;
@@ -78,6 +81,26 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
+    }
+
+    private async Task ShowModal(int id = 0, bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<CategoryEdit>(string.Empty, new ModalParameters().Add("CategoryId", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<CategoryCreate>();
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task LoadAsync(int page = 1)

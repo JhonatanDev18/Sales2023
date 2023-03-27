@@ -17,7 +17,7 @@ else
             <div class="card-header">
                 <span>
                     <i class="oi oi-person" /> Editar Usuario
-                    <a class="btn btn-sm btn-secondary float-end" href="/changePassword"><i class="oi oi-key" /> Cambiar Contraseña</a>
+                    <a class="btn btn-sm btn-secondary float-end" @onclick=@(() => ShowModal())><i class="oi oi-key" /> Cambiar Contraseña</a>
                     <button class="btn btn-sm btn-primary float-end mx-2" type="submit"><i class="oi oi-check" /> Guardar Cambios</button>
                 </span>
             </div>
@@ -124,7 +124,15 @@ else
     private List<City>? cities;
     private string? imageUrl;
 
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
     {
         await LoadUserAsyc();
         await LoadCountriesAsync();
@@ -136,7 +144,20 @@ else
             imageUrl = user.Photo;
             user.Photo = null;
         }
+    }
 
+    private async Task ShowModal()
+    {
+        IModalReference modalReference;
+
+        modalReference = Modal.Show<Auth.ChangePassword>();
+
+        var result = await modalReference.Result;
+
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task LoadUserAsyc()

@@ -1,4 +1,6 @@
-﻿using Azure.Storage.Blobs;
+﻿
+
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 
 namespace Sales.API.Helpers
@@ -6,6 +8,7 @@ namespace Sales.API.Helpers
     public class FileStorage : IFileStorage
     {
         private readonly string _connectionString;
+
         public FileStorage(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("AzureStorage")!;

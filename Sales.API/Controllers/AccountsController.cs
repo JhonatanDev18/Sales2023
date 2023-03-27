@@ -27,7 +27,7 @@ namespace Sales.API.Controllers
           _configuration = configuration;
           _fileStorage = fileStorage;
           _mailHelper = mailHelper;
-          _container = "Users";
+          _container = "users";
         }
 
         [HttpPost("RecoverPassword")]

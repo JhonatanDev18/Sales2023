@@ -5,8 +5,8 @@
 <EditForm EditContext="editContext" OnValidSubmit="OnDataAnnotationsValidatedAsync">
     <DataAnnotationsValidator />
 
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="width:100%">
+        <div class="card-header" style="width:100%">
             <span>
                 <i class="oi oi-document" /> Crear Nuevo Producto
                 <a class="btn btn-sm btn-success float-end" href="/products"><i class="oi oi-arrow-thick-left" /> Regresar</a>
@@ -57,8 +57,8 @@
                     </div>
                     @if (IsEdit)
                     {
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-outline-primary" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar Imagenes</button>
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-outline-primary mb-2" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar Imagenes</button>
                             <button type="button" class="btn btn-outline-danger" @onclick="RemoveImageAction"><i class="oi oi-trash" /> Eliminar Última Imagén</button>
                         </div>
                     }
@@ -68,10 +68,10 @@
     </div>
 </EditForm>
 
-@*@if (IsEdit && ProductDTO.ProductImages is not null)
+@if (IsEdit && ProductDTO.ProductImages is not null)
 {
     <CarouselView Images="ProductDTO.ProductImages" />
-}*@
+}
 
 @code {
     private EditContext editContext = null!;
